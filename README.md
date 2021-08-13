@@ -22,30 +22,10 @@ You will need to have the following packages installed:
 Then, run ```python2 setup.py install``` to install ```scapy-fakeap```.
 
 
-Examples
+Launch
 --------
 
-First, set up your device in monitor mode. You can use ```airmon-ng``` or ```iw```:
-
-```
-# iw dev wlan0 interface add mon0 type monitor
-# ifconfig mon0 up
-```
-
-From there, setting up a basic AP with ```scapy-fakeap``` is extremely simple, as shown in the example below:
-
-```python
-# This example is a simple 'hello world' for scapy-fakeap.
-# An open network will be created that can be joined by 802.11 enabled devices.
-
-from fakeap import *
-
-ap = FakeAccessPoint('mon0', 'Hello scapy-fakeap world!')
-ap.run()
-```
-
-For more examples, please see the 'examples' folder.
-
+`python2 launch.py`
 
 Callbacks
 ---------

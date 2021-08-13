@@ -14,12 +14,13 @@ class ARPHandler():
         self.mutex.release()
 
     def get_entry(self, client_ip):
-        self.mutex.acquire()
-        try:
-            temp = self.arp_table[client_ip]
-        except KeyError:
-            temp = None
-            printd("Could not find IP %s in ARP table." % client_ip, Level.WARNING)
-        self.mutex.release()
+        pass
+        # self.mutex.acquire()
+        # try:
+        #     temp = self.arp_table[client_ip]
+        # except KeyError:
+        #     temp = None
+        #     printd("Could not find IP %s in ARP table." % client_ip, Level.WARNING)
+        # self.mutex.release()
 
-        return temp
+        # return temp

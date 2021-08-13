@@ -22,6 +22,7 @@ class FakeAccessPoint(object):
 
         def run(self):
             while True:
+                # print "a"
                 for ssid in self.ap.ssids:
                     self.ap.callbacks.cb_dot11_beacon(ssid)
 
@@ -49,15 +50,18 @@ class FakeAccessPoint(object):
 
         return ap
 
-    def __init__(self, interface, ssid, bpffilter=""):
+    def __init__(self, interface, ssid, clientmac, bpffilter=""):
         self.callbacks = Callbacks(self)
         self.ssids = []
         self.current_ssid_index = 0
 
         self.interface = interface
         self.inet_interface = None
-        self.channel = 1
+        self.channel = 11
+
         self.mac = if_hwaddr(interface)
+        self.clientmac = clientmac
+
         self.wpa = 0
         self.ieee8021x = 0
         self.lfilter = None
@@ -135,7 +139,7 @@ class FakeAccessPoint(object):
         return temp
 
     def get_radiotap_header(self):
-        radiotap_packet = RadioTap(len=18, present='Flags+Rate+Channel+dBm_AntSignal+Antenna', notdecoded='\x00\x6c' + get_frequency(self.channel) + '\xc0\x00\xc0\x01\x00\x00')
+        radiotap_packet = RadioTap()
         return radiotap_packet
 
     def run(self):
@@ -149,4 +153,7 @@ class FakeAccessPoint(object):
         if self.inet_interface is not None:
             self.share_internet(self.inet_interface)
         scapyconf.iface = self.interface
-        sniff(iface=self.interface, prn=self.callbacks.cb_recv_pkt, store=0, filter=self.bpffilter)
+
+        bpf = "(wlan addr1 {apmac}) or (wlan addr2 {apmac})".format(apmac=self.mac, clientmac=self.clientmac)
+        bpf = "(wlan type data or wlan type mgt) and (%s)" % bpf
+        sniff(iface=self.interface, prn=self.callbacks.cb_recv_pkt, store=0, filter=bpf)
