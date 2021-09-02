@@ -25,7 +25,8 @@ Then, run ```python2 setup.py install``` to install ```scapy-fakeap```.
 Launch
 --------
 
-`python2 launch.py`
+`python2 launch.py <json_config_file_name>` <br>
+Please provide a valid json file filled like [this](./config.json).
 
 Callbacks
 ---------

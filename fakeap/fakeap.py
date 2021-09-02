@@ -50,23 +50,30 @@ class FakeAccessPoint(object):
 
         return ap
 
-    def __init__(self, interface, ssid, clientmac, bpffilter=""):
+    def __init__(self):
+        self.interface = ""
+        self.ssid = ""
+        self.channel = ""
+        self.bpffilter = ""
+
+
+    def start(self):
         self.callbacks = Callbacks(self)
         self.ssids = []
         self.current_ssid_index = 0
 
-        self.interface = interface
+        # self.interface = interface
         self.inet_interface = None
-        self.channel = 11
+        # self.channel = 11
 
-        self.mac = if_hwaddr(interface)
-        self.clientmac = clientmac
+        print(self.interface)
+        self.mac = if_hwaddr(self.interface)
 
         self.wpa = 0
         self.ieee8021x = 0
         self.lfilter = None
         self.hidden = False
-        if bpffilter == "":
+        if self.bpffilter == "":
             self.bpffilter = "not ( wlan type mgt subtype beacon ) and ((ether dst host " + self.mac + ") or (ether dst host ff:ff:ff:ff:ff:ff))"
         else:
             self.bpffilter = bpffilter
@@ -80,7 +87,7 @@ class FakeAccessPoint(object):
         self.eap = EAPHandler()
         self.arp = ARPHandler()
 
-        self.add_ssid(ssid)
+        self.add_ssid(self.ssid)
         self.beaconTransmitter = self.FakeBeaconTransmitter(self)
 
         self.tint = None
@@ -154,6 +161,6 @@ class FakeAccessPoint(object):
             self.share_internet(self.inet_interface)
         scapyconf.iface = self.interface
 
-        bpf = "(wlan addr1 {apmac}) or (wlan addr2 {apmac})".format(apmac=self.mac, clientmac=self.clientmac)
+        bpf = "(wlan addr1 {apmac}) or (wlan addr2 {apmac})".format(apmac=self.mac)
         bpf = "(wlan type data or wlan type mgt) and (%s)" % bpf
         sniff(iface=self.interface, prn=self.callbacks.cb_recv_pkt, store=0, filter=bpf)
